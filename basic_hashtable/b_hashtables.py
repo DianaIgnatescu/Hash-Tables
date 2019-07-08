@@ -21,6 +21,8 @@ class BasicHashTable:
         # underlying data structure
         self.storage = [None] * capacity
 
+    def __len__(self):
+        return self.capacity
 
 # '''
 # Fill this in.
