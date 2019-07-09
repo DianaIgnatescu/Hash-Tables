@@ -36,6 +36,18 @@ def hash(string, max):
     return hash % max
 
 
+# Check if hash_table overloaded
+def is_overloaded(hash_table):
+    none_count = 0
+    for item in hash_table.storage:
+        if item is None:
+            none_count = none_count + 1
+    load_level = (len(hash_table.storage) - none_count) / len(hash_table.storage)
+    if load_level >= 0.7:
+        return True
+    return False
+
+
 
 
 # '''
