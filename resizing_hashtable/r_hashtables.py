@@ -72,7 +72,22 @@ def find_next_empty_slot(starting_index, list):
 # Hint: Used the LL to handle collisions
 # '''
 def hash_table_insert(hash_table, key, value):
-    pass
+    if is_overloaded(hash_table):
+        hash_table_auto_resize(hash_table)
+    index = hash(key, len(hash_table))
+    if hash_table.storage[index] is None or hash_table.storage[index].key == key:
+        hash_table.storage[index] = LinkedPair(key, value)
+        return
+    while hash_table.storage[index].key != key:
+        if hash_table.storage[index].next is None:
+            next_empty_slot = find_next_empty_slot(index, hash_table.storage)
+            hash_table.storage[index].next = next_empty_slot
+            hash_table.storage[next_empty_slot] = LinkedPair(key, value)
+            break
+        else:
+            index = hash_table.storage[index].next
+
+
 
 
 # '''
