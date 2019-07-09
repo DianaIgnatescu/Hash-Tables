@@ -12,19 +12,30 @@ class LinkedPair:
 
 # '''
 # Fill this in
-
 # Resizing hash table
 # '''
 class HashTable:
     def __init__(self, capacity):
-        pass
+        # max length of hash table
+        self.capacity = capacity
+
+        # underlying data structure
+        self.storage = [None] * capacity
+
+    def __len__(self):
+        return self.capacity
 
 
 # '''
 # Research and implement the djb2 hash function
 # '''
 def hash(string, max):
-    pass
+    hash = 5381
+    for x in string:
+        hash = ((hash << 5) + hash) + ord(x)
+    return hash % max
+
+
 
 
 # '''
