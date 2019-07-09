@@ -48,6 +48,22 @@ def is_overloaded(hash_table):
     return False
 
 
+# Find the next empty array slot
+def find_next_empty_slot(starting_index, list):
+    index = starting_index
+    list_end = len(list) - 1
+    while True:
+        if list[index] is None:
+            break
+        if index == list_end:
+            index = 0
+            continue
+        if index == starting_index - 1:
+            index = None
+            break
+        index = index + 1
+        break
+    return index
 
 
 # '''
