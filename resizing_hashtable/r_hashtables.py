@@ -120,7 +120,21 @@ def hash_table_retrieve(hash_table, key):
 # Fill this in
 # '''
 def hash_table_resize(hash_table):
-    pass
+    # resize capacity (double it)
+    # rehash all keys and store them in new locations
+    new_capacity = hash_table.capacity * 2
+    new_hash_table = HashTable(new_capacity)
+    for item in hash_table.storage:
+        if item is None:
+            continue
+        hash_table_insert(new_hash_table, item.key, item.value)
+    return new_hash_table
+
+
+def hash_table_auto_resize(hash_table):
+    new_hash_table = hash_table_resize(hash_table)
+    hash_table.capacity = new_hash_table.capacity
+    hash_table.storage = new_hash_table.storage
 
 
 def Testing():
