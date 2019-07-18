@@ -12,19 +12,58 @@ class LinkedPair:
 
 # '''
 # Fill this in
-
 # Resizing hash table
 # '''
 class HashTable:
     def __init__(self, capacity):
-        pass
+        # max length of hash table
+        self.capacity = capacity
+
+        # underlying data structure
+        self.storage = [None] * capacity
+
+    def __len__(self):
+        return self.capacity
 
 
 # '''
 # Research and implement the djb2 hash function
 # '''
 def hash(string, max):
-    pass
+    hash = 5381
+    for x in string:
+        hash = ((hash << 5) + hash) + ord(x)
+    return hash % max
+
+
+# Check if hash_table overloaded
+def is_overloaded(hash_table):
+    none_count = 0
+    for item in hash_table.storage:
+        if item is None:
+            none_count = none_count + 1
+    load_level = (len(hash_table.storage) - none_count) / len(hash_table.storage)
+    if load_level >= 0.7:
+        return True
+    return False
+
+
+# Find the next empty array slot
+def find_next_empty_slot(starting_index, list):
+    index = starting_index
+    list_end = len(list) - 1
+    while True:
+        if list[index] is None:
+            break
+        if index == list_end:
+            index = 0
+            continue
+        if index == starting_index - 1:
+            index = None
+            break
+        index = index + 1
+        break
+    return index
 
 
 # '''
@@ -33,7 +72,22 @@ def hash(string, max):
 # Hint: Used the LL to handle collisions
 # '''
 def hash_table_insert(hash_table, key, value):
-    pass
+    if is_overloaded(hash_table):
+        hash_table_auto_resize(hash_table)
+    index = hash(key, len(hash_table))
+    if hash_table.storage[index] is None or hash_table.storage[index].key == key:
+        hash_table.storage[index] = LinkedPair(key, value)
+        return
+    while hash_table.storage[index].key != key:
+        if hash_table.storage[index].next is None:
+            next_empty_slot = find_next_empty_slot(index, hash_table.storage)
+            hash_table.storage[index].next = next_empty_slot
+            hash_table.storage[next_empty_slot] = LinkedPair(key, value)
+            break
+        else:
+            index = hash_table.storage[index].next
+
+
 
 
 # '''
@@ -42,7 +96,24 @@ def hash_table_insert(hash_table, key, value):
 # If you try to remove a value that isn't there, print a warning.
 # '''
 def hash_table_remove(hash_table, key):
-    pass
+    index = hash(key, len(hash_table))
+    if hash_table.storage[index] is None:
+        print("WARNING: No value found for the given key")
+        return
+    if hash_table.storage[index].key == key:
+        hash_table.storage[index] = None
+        return
+    prev_index = None
+    while hash_table.storage[index].key != key:
+        next_index = hash_table.storage[index].next
+        if next_index is None:
+            print("WARNING: No value found for the given key")
+            return
+        prev_index = index
+        index = next_index
+    new_next = hash_table.storage[index].next
+    hash_table.storage[prev_index].next = new_next
+    hash_table.storage[index] = None
 
 
 # '''
@@ -51,14 +122,36 @@ def hash_table_remove(hash_table, key):
 # Should return None if the key is not found.
 # '''
 def hash_table_retrieve(hash_table, key):
-    pass
+    index = hash(key, len(hash_table))
+    if hash_table.storage[index] is None:
+        return None
+    while hash_table.storage[index].key != key:
+        if hash_table.storage[index].next is not None:
+            index = hash_table.storage[index].next
+        else:
+            return None
+    return hash_table.storage[index].value
 
 
 # '''
 # Fill this in
 # '''
 def hash_table_resize(hash_table):
-    pass
+    # resize capacity (double it)
+    # rehash all keys and store them in new locations
+    new_capacity = hash_table.capacity * 2
+    new_hash_table = HashTable(new_capacity)
+    for item in hash_table.storage:
+        if item is None:
+            continue
+        hash_table_insert(new_hash_table, item.key, item.value)
+    return new_hash_table
+
+
+def hash_table_auto_resize(hash_table):
+    new_hash_table = hash_table_resize(hash_table)
+    hash_table.capacity = new_hash_table.capacity
+    hash_table.storage = new_hash_table.storage
 
 
 def Testing():
